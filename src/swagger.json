@@ -115,43 +115,167 @@
           }
         ],
 
-        "content": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Updated name of the pet",
-                "type": "string"
-              },
-              "status": {
-                "description": "Updated status of the pet",
-                "type": "string"
-              }
-            },
-            "required": ["status"]
-          }
-        },
         "responses": {
           "200": {
-            "description": "Pet updated.",
+            "description": "Operação realizada com sucesso",
             "content": {
-              "application/json": {},
-              "application/xml": {}
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "9fe22905-8ca1-48e7-bdcb-1f9cbfa1348b"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Maria Teste"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "mariateste@gmail.com"
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "example": "2022-01-17T12:18:30.424Z"
+                      },
+                      "updated_at": {
+                        "type": "string",
+                        "example": "2022-01-17T12:18:41.076Z"
+                      },
+                      "admin": {
+                        "type": "boolean",
+                        "example": true
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "400": {
+            "description": "Mensagem do erro",
             "content": {
-              "application/json": {},
-              "application/xml": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "You need to be an administrator to list all users."
+                    }
+                  }
+                }
+              }
             }
           }
-        },
-        "security": [
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "summary": "Retorna um usuário especifico",
+        "description": "Retornara um usuário especifico pelo user_id",
+        "tags": ["user"],
+        "parameters": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "name": "user_id - ID do usuário",
+            "in": "path",
+            "description": "ID do usuário"
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags": ["user"],
+        "description": "Muda o estatus de usuário para administrador",
+        "summary": "Altera perfil de usuário para administrador",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "content": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacão realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/user"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "admin": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
